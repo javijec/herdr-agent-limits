@@ -50,7 +50,10 @@ The servers are asked at start, every 5 minutes and from the refresh button. To 
 
 ## Requirements
 
-macOS or Linux with `sh`, `jq` and `curl`. Codex limits need the `codex` CLI signed in with ChatGPT.
+- macOS or Linux: `sh`, `jq` and `curl`.
+- Windows: PowerShell (`pwsh` or Windows PowerShell) and Codex CLI signed in with ChatGPT for Codex server limits. The mod also detects the Codex app's bundled CLI path from `~/.codex/config.toml`.
+
+Codex local session-log reading and Claude's optional statusline integration are currently supported by the Unix scripts; Windows uses the Codex app-server query and includes `statusline.ps1` for Claude.
 
 ## Known limitations
 

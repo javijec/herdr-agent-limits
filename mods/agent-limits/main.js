@@ -1,5 +1,5 @@
 // Usage limits of the coding agents on this computer, one line per agent, under the Agents list.
-// limits.sh beside this file reads them: Claude's statusline cache and Codex's session logs.
+// The platform script beside this file reads Claude's statusline cache and Codex session logs.
 // Agents running now are drawn in full; the others are dimmed.
 
 import { View, div, image, svg } from "gpui-kit";
@@ -70,8 +70,17 @@ export default class AgentLimits extends View {
     cx.spawn(async (cx) => {
       let error = null;
       try {
-        const args = [`${appHome()}/mods/agent-limits/limits.sh`, ...(live ? ["--live"] : [])];
-        const r = await exec("sh", args);
+        const base = `${appHome()}/mods/agent-limits/limits`;
+        let r;
+        try {
+          r = await exec("pwsh", ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", `${base}.ps1`, ...(live ? ["-Live"] : [])]);
+        } catch {
+          try {
+            r = await exec("powershell.exe", ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", `${base}.ps1`, ...(live ? ["-Live"] : [])]);
+          } catch {
+            r = await exec("sh", [`${base}.sh`, ...(live ? ["--live"] : [])]);
+          }
+        }
         if (r.code !== 0) throw new Error(r.stderr.trim() || `limits.sh exited ${r.code}`);
         // A server answer is the newest data there is; a local read that started before
         // another applied run must not put older numbers back.
